@@ -13,4 +13,4 @@ It's an Alfred workflow to make timestamp or date conversion easy and rapid.
 ![Demo](./demo.png)
 
 ## Install
-Click [easy-timestamp](https://github.com/swxu/easy-timestamp-workflow/raw/main/easy-timestamp.alfredworkflow)
+Download directly [easy-timestamp](https://github.com/swxu/easy-timestamp-workflow/raw/main/easy-timestamp.alfredworkflow)
