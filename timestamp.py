@@ -40,10 +40,9 @@ LAYOUTS = [
 
 
 def generate_items(t):
-    tz = time.strftime("%Z", time.localtime())
     ts = str(int(time.mktime(t.timetuple())))
     items = [Item(ts, "Timestamp", ts)]
-    items.extend([Item(t.strftime(layout), tz, t.strftime(layout))
+    items.extend([Item(t.strftime(layout), str(t.tzinfo), t.strftime(layout))
                  for layout in LAYOUTS])
     return items
 
@@ -68,10 +67,10 @@ def main():
         arg = sys.argv[1].strip().lower()
         ts = atoi_default(arg, 0)
         if len(arg) == 0:
-            now = datetime.now()
+            now = datetime.now().astimezone()
             items = generate_items(now)
         elif arg.startswith("now"):
-            t = datetime.now()
+            t = datetime.now().astimezone()
             delta = arg[3:]
             if len(delta) > 0:
                 if delta[0] == '+':
@@ -81,12 +80,12 @@ def main():
 
             items = generate_items(t)
         elif ts > 0:
-            t = datetime.fromtimestamp(ts)
+            t = datetime.fromtimestamp(ts).astimezone()
             items = generate_items(t)
         else:
             for layout in LAYOUTS:
                 try:
-                    t = datetime.strptime(arg, layout)
+                    t = datetime.strptime(arg, layout).astimezone()
                     items = generate_items(t)
                 except ValueError:
                     continue
