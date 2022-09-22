@@ -35,13 +35,16 @@ LAYOUTS = [
     "%Y-%m-%d",
     "%Y-%m-%d %H:%M:%S",
     "%Y-%m-%d %H:%M:%S %z",
+    "%Y-%m-%d %H:%M:%S.%f",
+    "%Y-%m-%d %H:%M:%S.%f %z",
     "%c",
 ]
 
 
 def generate_items(t):
-    ts = str(int(time.mktime(t.timetuple())))
-    items = [Item(ts, "Timestamp", ts)]
+    ts = t.timestamp()
+    items = [Item(str(int(ts)), "Timestamp", str(int(ts))), Item(
+        int(round(ts * 1000)), "Timestamp in milliseconds", int(round(ts * 1000)))]
     items.extend([Item(t.strftime(layout), str(t.tzinfo), t.strftime(layout))
                  for layout in LAYOUTS])
     return items
@@ -80,13 +83,18 @@ def main():
 
             items = generate_items(t)
         elif ts > 0:
-            t = datetime.fromtimestamp(ts).astimezone()
+            try:
+                t = datetime.fromtimestamp(ts).astimezone()
+            except ValueError:
+                # timestamp in milliseconds
+                t = datetime.fromtimestamp(ts/1000).astimezone()
             items = generate_items(t)
         else:
             for layout in LAYOUTS:
                 try:
                     t = datetime.strptime(arg, layout).astimezone()
                     items = generate_items(t)
+                    break
                 except ValueError:
                     continue
 
